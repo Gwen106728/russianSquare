@@ -1,6 +1,8 @@
 var Local = function () {
     // game obj
     var game;
+    // time间隔
+    var INTERVAL = 500;
     // bind keyboard
     var bindkeyEvent = function () {
         document.onkeydown = function (e) {
@@ -21,6 +23,32 @@ var Local = function () {
 
         }
     }
+    // move
+    var move =function () {
+        if(!game.down()){
+            game.fixed();
+            game.checkClear();
+            var gameOver = game.checkgameOver()
+            if(gameOver){
+                stop();
+            } else{
+                game.performNext(generateType(), generateDir());
+            }
+        }
+    }
+    var stop = function () {
+        if(timer){
+            clearInterval(timer)
+            timer = null
+        }
+        document.onkeydown = null
+    }
+    var generateType =function () {
+        return Math.ceil(Math.random() * 7) -1;
+    }
+    var generateDir =function () {
+        return Math.ceil(Math.random() * 4) -1;
+    }
     // start
     var start = function () {
         var doms = {
@@ -30,6 +58,7 @@ var Local = function () {
         game = new Game();
         game.init(doms)
         bindkeyEvent()
+        timer = setInterval(move, INTERVAL)
     }
     // export api
     this.start = start;
