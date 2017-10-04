@@ -2,7 +2,10 @@ var Game = function () {
     // dom elements
     var gameDiv;
     var nextDiv;
-    var timer = null
+    var timeDiv;
+    var scoreDiv;
+    var score = 0;
+    var resultDiv;
     // game 矩阵
     var gameData = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -33,6 +36,10 @@ var Game = function () {
     // divs
     var nextDivs = []
     var gameDivs = []
+    //
+    var setTime = function (time) {
+        timeDiv.innerHTML = time;
+    }
     var initDiv = function (container, data, divs) {
         for(var i=0; i<data.length; i++){
             var div = [];
@@ -174,6 +181,7 @@ var Game = function () {
         refreshDiv(next.data, nextDivs)
     }
     var checkClear = function () {
+        var line = 0;
         for(var i=gameData.length-1; i>=0; i--){
             var clear = true;
             for(var j=0; j<gameData[0].length; j++){
@@ -183,6 +191,7 @@ var Game = function () {
                 }
             }
             if(clear){
+                line = line + 1
                 for(var m=i; m>0; m--){
                     for(var n=0; n<gameData[0].length; n++){
                         gameData[m][n] = gameData[m-1][n]
@@ -194,6 +203,7 @@ var Game = function () {
                 i++
             }
         }
+        return line;
     }
     var checkgameOver = function () {
         var gameOver = false;
@@ -204,19 +214,60 @@ var Game = function () {
         }
         return gameOver
     }
+    // addScore
+    var addScore = function (line) {
+        var s = 0;
+        switch(line) {
+            case 1:
+                s = 10;
+                break;
+            case 2:
+                s = 30
+                break;
+            case 3:
+                s = 60;
+                break;
+            case 4:
+                s = 100;
+                break;
+            default:
+                break
+        }
+        score += s;
+        scoreDiv.innerHTML = score + '分'
+    }
+    // gameover
+    var gameover = function (win) {
+        if(win){
+            resultDiv.innerHTML = 'You win!'
+        } else{
+            resultDiv.innerHTML = 'lost!'
+        }
+    }
+    // 底部增加行
+    var addTailLines = function (lines) {
+        for(var i=0; i<gameData.length-lines.length; i++){
+            gameData[i] = gameData[i + 1]
+        }
+        for(var i=0; i<lines.length; i++) {
+            gameData[gameData.length - lines.length + i] = lines[i];
+        }
+        cur.origin.x = cur.origin.x - lines.length;
+        if(cur.origin.x < 0){
+            cur.origin.x = 0
+        }
+        refreshDiv(gameData, gameDivs);
+    }
     // init
-    var init = function (doms) {
+    var init = function (doms, type, dir) {
         gameDiv = doms.gameDiv;
         nextDiv = doms.nextDiv;
-        cur = SquareFactory.prototype.make(2,2);
-
-        next = SquareFactory.prototype.make(3,3);
+        timeDiv = doms.timeDiv;
+        scoreDiv = doms.scoreDiv;
+        resultDiv = doms.resultDiv;
+        next = SquareFactory.prototype.make(type, dir);
         initDiv(gameDiv, gameData, gameDivs)
         initDiv(nextDiv, next.data, nextDivs)
-        cur.origin.x = 10;
-        cur.origin.y = 5;
-        setData()
-        refreshDiv(gameData, gameDivs)
         refreshDiv(next.data, nextDivs)
     }
     // 导出api
@@ -232,4 +283,8 @@ var Game = function () {
     this.performNext = performNext;
     this.checkgameOver = checkgameOver;
     this.checkClear = checkClear;
+    this.setTime = setTime;
+    this.addScore = addScore;
+    this.gameover = gameover;
+    this.addTailLines = addTailLines;
 }
