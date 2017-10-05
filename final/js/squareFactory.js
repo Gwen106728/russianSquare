@@ -220,25 +220,25 @@ var SquareFactory = function () {}
 SquareFactory.prototype.make = function (index, dir) {
     var s;
     switch(index) {
-        case 1:
+        case 0:
             s = new Square1();
             break;
-        case 2:
+        case 1:
             s = new Square2();
             break;
-        case 3:
+        case 2:
             s = new Square3();
             break;
-        case 4:
+        case 3:
             s = new Square4();
             break;
-        case 5:
+        case 4:
             s = new Square5();
             break;
-        case 6:
+        case 5:
             s = new Square6();
             break;
-        case 7:
+        case 6:
             s = new Square7();
             break;
         default:
